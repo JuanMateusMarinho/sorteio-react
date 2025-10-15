@@ -171,6 +171,15 @@ input::placeholder { /* Estilos para o placeholder */
   cursor: pointer;
 }
 
+.close-confirm, .close-edit-confirm, .close-save-confirm, .close-raffle-winner {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+
 label{
   margin-bottom: 5px;
 }
@@ -215,6 +224,27 @@ tbody tr:nth-child(even) {
 
 tbody tr:hover {
   background-color: #e9ecef; /* Efeito hover para as linhas */
+}
+
+/* Estilo para a linha do usuário sorteado */
+tbody tr.winner {
+  background-color: #f0c419 !important; /* Cor de destaque, usando o amarelo do botão */
+  color: #333;
+  font-weight: bold;
+  transform: scale(1.02);
+}
+
+/* Estilos para o conteúdo do modal do vencedor */
+.winner-title {
+  color: #f0c419; /* Amarelo do botão de sorteio */
+  margin-bottom: 1rem;
+}
+
+#winnerName {
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #333;
+  margin-top: 0.5rem;
 }
 
 /* Estilos para os botões de ação na tabela */

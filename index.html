@@ -46,11 +46,33 @@
       </div>
     </div>
 
+      <!-- Modal de Confirmação de Alteração -->
+      <div id="editConfirmModal" class="modal">
+        <div class="modal-content">
+          <span class="close-edit-confirm">&times;</span>
+          <p>Deseja alterar o usuário?</p>
+          <button id="confirmEditBtn" class="action-button edit">Ok</button>
+          <button id="cancelEditBtn" class="action-button">Cancelar</button>
+        </div>
+      </div>
+
+    <!-- Modal do Vencedor do Sorteio -->
+    <div id="raffleWinnerModal" class="modal">
+      <div class="modal-content">
+        <span class="close-raffle-winner">&times;</span>
+        <h2 class="winner-title">🎉 Parabéns! 🎉</h2>
+        <p>O usuário sorteado foi:</p>
+        <p id="winnerName"></p>
+        <p id="winnerEmail"></p>
+        <button id="closeRaffleModalBtn" class="action-button">Fechar</button>
+      </div>
+    </div>
+
     <footer>
       <p>Admin Client &copy; 2025</p>
     </footer>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <!-- <script type="module" src="/src/main.jsx"></script> -->
     <script>
       // Função para buscar usuários e preencher a tabela
       async function fetchAndDisplayUsers() {
@@ -63,17 +85,42 @@
         ];
 
         // Cria uma linha na tabela para cada usuário de teste
-        testUsers.forEach(user => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${user.name}</td>
-            <td>${user.email}</td>
-            <td class="action-cell">
-              <button class="action-button delete">Deletar</button>
-              <button class="action-button edit">Alterar</button>
-            </td>
-          `;
-          tbody.appendChild(tr);
+          testUsers.forEach(user => {
+            const tr = document.createElement('tr');
+            // Nome
+            const tdName = document.createElement('td');
+            tdName.className = 'user-name';
+            tdName.textContent = user.name;
+            tr.appendChild(tdName);
+
+            // Email
+            const tdEmail = document.createElement('td');
+            tdEmail.className = 'user-email';
+            tdEmail.textContent = user.email;
+            tr.appendChild(tdEmail);
+
+            // Botão Alterar
+
+            // Célula de ações: botões um em cima do outro
+            const tdActions = document.createElement('td');
+            tdActions.className = 'action-cell';
+            tdActions.style.display = 'flex';
+            tdActions.style.flexDirection = 'column';
+            tdActions.style.gap = '8px';
+
+            const editBtn = document.createElement('button');
+            editBtn.textContent = 'Alterar';
+            editBtn.className = 'action-button edit';
+            tdActions.appendChild(editBtn);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Deletar';
+            deleteBtn.className = 'action-button delete';
+            tdActions.appendChild(deleteBtn);
+
+            tr.appendChild(tdActions);
+
+            tbody.appendChild(tr);
         });
       }
 
@@ -92,11 +139,23 @@
           rowToDelete = event.target.closest('tr');
           deleteModal.style.display = 'block';
         }
+          if (event.target.classList.contains('edit')) {
+            rowToEdit = event.target.closest('tr');
+            editModal.style.display = 'block';
+            // Captura os dados do usuário selecionado
+            const name = rowToEdit.querySelector('.user-name')?.textContent || '';
+            const email = rowToEdit.querySelector('.user-email')?.textContent || '';
+            // Armazena para uso no redirecionamento
+            rowToEdit.dataset.name = name;
+            rowToEdit.dataset.email = email;
+          }
       });
 
       function closeModal() {
         deleteModal.style.display = 'none';
         rowToDelete = null;
+          editModal.style.display = 'none';
+          rowToEdit = null;
       }
 
       confirmDeleteBtn.addEventListener('click', function() {
@@ -106,12 +165,85 @@
         closeModal();
       });
 
+        // Lógica do Modal de Confirmação de Alteração
+        const editModal = document.getElementById('editConfirmModal');
+        const confirmEditBtn = document.getElementById('confirmEditBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const closeEditConfirmSpan = document.querySelector('.close-edit-confirm');
+        let rowToEdit = null;
+
+        confirmEditBtn.addEventListener('click', function() {
+            if (rowToEdit) {
+              // Redireciona para a página de alteração levando nome e email
+              const name = rowToEdit.dataset.name || '';
+              const email = rowToEdit.dataset.email || '';
+              const params = new URLSearchParams({ name, email });
+              window.location.href = `src/alteraruser.html?${params.toString()}`;
+            }
+            closeModal();
+        });
+
+        cancelEditBtn.addEventListener('click', closeModal);
+        closeEditConfirmSpan.addEventListener('click', closeModal);
+
       cancelDeleteBtn.addEventListener('click', closeModal);
       closeConfirmSpan.addEventListener('click', closeModal);
       window.addEventListener('click', function(event) {
         if (event.target == deleteModal) {
           closeModal();
         }
+          if (event.target == editModal) {
+            closeModal();
+          }
+      });
+
+      // Lógica do Sorteio
+      const raffleButton = document.querySelector('.raffle-button');
+      raffleButton.addEventListener('click', function() {
+        const tbody = document.querySelector("table tbody");
+        const users = tbody.querySelectorAll('tr');
+
+        if (users.length === 0) {
+          alert('Não há usuários na tabela para sortear!');
+          return;
+        }
+
+        // Remove o destaque de um vencedor anterior
+        const previousWinner = document.querySelector('.winner');
+        if (previousWinner) {
+          previousWinner.classList.remove('winner');
+        }
+
+        // Sorteia um novo vencedor
+        const randomIndex = Math.floor(Math.random() * users.length);
+        const winnerRow = users[randomIndex];
+        winnerRow.classList.add('winner');
+        winnerRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        const winnerName = winnerRow.querySelector('.user-name').textContent;
+        const winnerEmail = winnerRow.querySelector('.user-email').textContent;
+
+        // Preenche e exibe o modal do vencedor
+        const winnerModal = document.getElementById('raffleWinnerModal');
+        document.getElementById('winnerName').textContent = winnerName;
+        document.getElementById('winnerEmail').textContent = winnerEmail;
+        winnerModal.style.display = 'block';
+
+        // Lógica para fechar o modal do vencedor
+        const closeRaffleBtn = document.getElementById('closeRaffleModalBtn');
+        const closeRaffleSpan = document.querySelector('.close-raffle-winner');
+
+        function closeRaffleModal() {
+          winnerModal.style.display = 'none';
+        }
+
+        closeRaffleBtn.addEventListener('click', closeRaffleModal);
+        closeRaffleSpan.addEventListener('click', closeRaffleModal);
+        window.addEventListener('click', function(event) {
+          if (event.target == winnerModal) {
+            closeRaffleModal();
+          }
+        });
       });
     </script>
   </body> 

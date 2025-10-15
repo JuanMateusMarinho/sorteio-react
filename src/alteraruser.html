@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>.::Alterar Usuário::.</title>
+    <!-- Link para o mesmo CSS para manter a consistência visual -->
+    <link rel="stylesheet" href="/global.css">
+  </head>
+  <body>
+    <header>
+      <h1>..::ALTERAR USUÁRIO::..</h1>
+    </header>
+
+    <main class="form-container">
+      <form id="edit-user-form">
+        <div class="form-group">
+          <label for="name">Nome:</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="action-button edit">Salvar Alterações</button>
+          <a href="/index.html" class="action-button">Cancelar</a>
+        </div>
+      </form>
+    </main>
+
+    <!-- Modal de Confirmação de Salvamento -->
+    <div id="saveConfirmModal" class="modal">
+      <div class="modal-content">
+        <span class="close-save-confirm">&times;</span>
+        <p>Deseja realmente salvar as alterações?</p>
+        <button id="confirmSaveBtn" class="action-button edit">Sim, Salvar</button>
+        <button id="cancelSaveBtn" class="action-button">Não, Cancelar</button>
+      </div>
+    </div>
+
+
+    <footer>
+      <p>Admin Client &copy; 2025</p>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('edit-user-form');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+
+        // Elementos do Modal
+        const saveModal = document.getElementById('saveConfirmModal');
+        const confirmSaveBtn = document.getElementById('confirmSaveBtn');
+        const cancelSaveBtn = document.getElementById('cancelSaveBtn');
+        const closeSaveSpan = document.querySelector('.close-save-confirm');
+
+
+        // 1. Pega os parâmetros da URL
+        const params = new URLSearchParams(window.location.search);
+        const name = params.get('name');
+        const email = params.get('email');
+
+        // 2. Preenche o formulário com os dados do usuário
+        if (name && email) {
+          nameInput.value = name;
+          emailInput.value = email;
+        }
+
+        // 3. Adiciona o evento de submit ao formulário
+        form.addEventListener('submit', (event) => {
+          event.preventDefault(); // Impede o envio padrão do formulário
+
+          // Em vez de redirecionar direto, abre o modal de confirmação
+          saveModal.style.display = 'block';
+        });
+
+        // Função para fechar o modal
+        function closeModal() {
+          saveModal.style.display = 'none';
+        }
+
+        // Evento para o botão de confirmação final
+        confirmSaveBtn.addEventListener('click', () => {
+            // Aqui você adicionaria a lógica para enviar os dados para um backend.
+            // Como não temos um, vamos apenas simular o sucesso e redirecionar.
+            alert('Usuário alterado com sucesso! (Simulação)');
+            window.location.href = '/index.html'; // Redireciona para a página inicial
+        });
+
+        // Eventos para fechar o modal
+        cancelSaveBtn.addEventListener('click', closeModal);
+        closeSaveSpan.addEventListener('click', closeModal);
+        window.addEventListener('click', (event) => {
+            if (event.target == saveModal) closeModal();
+        });
+      });
+    </script>
+  </body>
+</html>
