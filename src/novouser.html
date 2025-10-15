@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>::Sorteios::.</title>
+    <link rel="stylesheet" href="/global.css">
+<body>
+    <header>
+        <h1>Adicionar Novo Usuário</h1>
+    </header>
+    <section class="add-user-section">
+        <form id="addUserForm">
+          <div>
+            <label for="name">Nome:</label>
+            <input type="text" id="name" name="name" placeholder="Digite o seu nome" required>
+          </div>
+          <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Digite o seu email" required>
+          </div>
+            <button type="submit">Adicionar Usuário</button>
+        </form>
+    </section>
+
+    <!-- Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modalMessage">Usuário adicionado com sucesso!</p>
+        </div>
+    </div>
+    <footer>
+        <p>Admin Client &copy; 2025</p>
+    </footer>
+    <script>
+        document.getElementById('addUserForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+
+            // Simulação de sucesso para teste local (sem backend)
+            // Abre o modal
+            document.getElementById('modalMessage').innerText = `Usuário ${name} com email ${email} adicionado com sucesso!`;
+            document.getElementById('successModal').style.display = "block";
+        });
+
+        // Fecha o modal quando o usuário clica no botão de fechar
+        document.querySelector('.close').addEventListener('click', function() {
+            document.getElementById('successModal').style.display = "none";
+            window.location.href = '/index.html';
+        });
+
+        // Fecha o modal quando o usuário clica fora do modal
+        window.addEventListener('click', function(event) {
+            if (event.target == document.getElementById('successModal')) { document.getElementById('successModal').style.display = "none"; window.location.href = '/index.html'; }
+
+        });
+    </script>
+</body>
+</html>

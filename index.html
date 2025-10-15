@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>.::Sorteios::.</title>
+    <link rel="stylesheet" href="/global.css">
+  </head>
+  <body>
+    <header>
+      <h1>..::SORTEIOS::..</h1>
+    </header>
+    <section class="raffle-section">
+      <p1>Sorteie usuários da tabela abaixo.</p1>
+      <button class="raffle-button">Sorteie um Usuário</button>
+    </section>
+    <section class="create-user-section">
+       <p1 class="text-green">Ou adicione um novo:</p1>
+      <nav>
+        <button class="create-user-button"><a href="src/novouser.html">Adicionar Novos Usuários</a></button>
+      </nav>
+    </section> 
+    <section>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Opções</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Linhas de usuários serão inseridas aqui -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Modal de Confirmação de Deleção -->
+    <div id="deleteConfirmModal" class="modal">
+      <div class="modal-content">
+        <span class="close-confirm">&times;</span>
+        <p>Deseja deletar o usuário?</p>
+        <button id="confirmDeleteBtn" class="action-button delete">Ok</button>
+        <button id="cancelDeleteBtn" class="action-button">Cancelar</button>
+      </div>
+    </div>
+
+    <footer>
+      <p>Admin Client &copy; 2025</p>
+    </footer>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <script>
+      // Função para buscar usuários e preencher a tabela
+      async function fetchAndDisplayUsers() {
+        const tbody = document.querySelector("table tbody");
+        tbody.innerHTML = ""; // Limpa a tabela antes de preencher
+
+        // Dados de teste (mock) para exibir na tabela
+        const testUsers = [
+          { name: "Usuário de Teste", email: "teste@exemplo.com" },
+        ];
+
+        // Cria uma linha na tabela para cada usuário de teste
+        testUsers.forEach(user => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td class="action-cell">
+              <button class="action-button delete">Deletar</button>
+              <button class="action-button edit">Alterar</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // Executa a função quando o conteúdo da página for carregado
+      document.addEventListener('DOMContentLoaded', fetchAndDisplayUsers);
+
+      // Lógica do Modal de Confirmação de Deleção
+      const deleteModal = document.getElementById('deleteConfirmModal');
+      const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+      const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+      const closeConfirmSpan = document.querySelector('.close-confirm');
+      let rowToDelete = null;
+
+      document.querySelector('table tbody').addEventListener('click', function(event) {
+        if (event.target.classList.contains('delete')) {
+          rowToDelete = event.target.closest('tr');
+          deleteModal.style.display = 'block';
+        }
+      });
+
+      function closeModal() {
+        deleteModal.style.display = 'none';
+        rowToDelete = null;
+      }
+
+      confirmDeleteBtn.addEventListener('click', function() {
+        if (rowToDelete) {
+          rowToDelete.remove();
+        }
+        closeModal();
+      });
+
+      cancelDeleteBtn.addEventListener('click', closeModal);
+      closeConfirmSpan.addEventListener('click', closeModal);
+      window.addEventListener('click', function(event) {
+        if (event.target == deleteModal) {
+          closeModal();
+        }
+      });
+    </script>
+  </body> 
+</html>
+     

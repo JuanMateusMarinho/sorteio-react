@@ -1,0 +1,256 @@
+*{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    padding: 10px;
+    text-decoration: none;
+}
+h1 {
+  color: white;
+  font-size: 2.5em;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  margin: 0;
+}
+
+.text-green {
+  color: green;
+}
+
+.text-blue {
+  color: blue;
+}
+
+header {
+  background: linear-gradient(90deg, #4a90e2 0%, #50e3c2 100%);
+  padding: 1.5rem 2rem;
+  text-align: center;
+  border-bottom: none;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 800px; 
+  margin: 0 auto 2rem auto;
+}
+
+p1 {
+  color: green;
+  font-size: 1.2rem;
+  margin: 1rem 0;
+}
+
+button {
+  background-color: #d4e1f5;
+  color: black;
+  padding: 0.5rem   1rem;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.raffle-button {
+  background: linear-gradient(45deg, #f0c419, #ff8c00);
+  color: white;
+  font-weight: bold;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 50px; 
+  cursor: pointer;
+  font-size: 1.1rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  animation: pulse-glow 2s infinite;
+}
+
+.raffle-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(240, 196, 25, 0.5);
+}
+
+/* Animação de brilho pulsante */
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 5px #f0c419, 0 0 10px #f0c419;
+  }
+  50% {
+    box-shadow: 0 0 20px #ff8c00, 0 0 30px #ff8c00;
+  }
+  100% {
+    box-shadow: 0 0 5px #f0c419, 0 0 10px #f0c419;
+  }
+}
+
+.raffle-section {
+  margin-top: 2rem;
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.raffle-section p1 {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.create-user-section {
+  margin-top: 2.5rem; 
+  margin-bottom: 1.5rem; 
+  text-align: center; 
+}
+
+.create-user-section p1 {
+  margin-bottom: 1rem; 
+  display: block; 
+}
+
+.create-user-button {
+  background: linear-gradient(45deg, #4a90e2, #50e3c2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.create-user-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+}
+
+input::placeholder { /* Estilos para o placeholder */
+  opacity: 0.7; /* Ajuste a opacidade conforme necessário */
+}
+
+/* Estilos para o modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+}
+
+.modal-content {
+  text-align: center; /* Centraliza o conteúdo do modal */
+}
+
+.modal-content p {
+  margin-bottom: 20px; /* Adiciona espaço abaixo do texto */
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+label{
+  margin-bottom: 5px;
+}
+
+input{
+  margin-bottom: 10px;
+}
+
+/* Estilo para os containers dos campos */
+.add-user-section form div {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px; /* Espaçamento entre os campos */
+}
+
+/* Estilos para a tabela de usuários */
+table {
+  width: 100%;
+  max-width: 800px; /* Mesma largura máxima do header */
+  margin: 2rem auto; /* Centraliza a tabela e adiciona espaçamento */
+  border-collapse: collapse; /* Remove o espaçamento entre as bordas */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden; /* Garante que o border-radius seja aplicado nas bordas */
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+thead th {
+  background-color: #4a90e2; /* Cor azul do seu header */
+  color: white;
+  font-weight: 600;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f8f9fa; /* Cor de fundo para linhas pares */
+}
+
+tbody tr:hover {
+  background-color: #e9ecef; /* Efeito hover para as linhas */
+}
+
+/* Estilos para os botões de ação na tabela */
+.action-button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-right: 5px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  background-color: #7f8c8d; /* Cinza para botões de ação genéricos/cancelar */
+}
+
+.action-button.delete {
+  background-color: #e74c3c; /* Vermelho */
+}
+
+.action-button.delete:hover {
+  background-color: #c0392b;
+}
+
+.action-button:not(.delete):not(.edit):hover {
+  background-color: #c0392b;
+}
+
+.action-button.edit {
+  background-color: #3498db; /* Azul */
+}
+
+.action-button.edit:hover {
+  background-color: #2980b9;
+}
+
+/* Adiciona um pouco de espaço entre os botões de ação na tabela */
+.action-cell button:not(:last-child) {
+    margin-right: 5px;
+}
