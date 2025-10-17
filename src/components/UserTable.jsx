@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { getUsers, deleteUser } from '../services/userService';
 
 function UserTable() {
   const [users, setUsers] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
-  // Mock data similar to the original script
-  const initialUsers = [
-    { name: "Usuário de Teste", email: "teste@exemplo.com" },
-  ];
-
   useEffect(() => {
-    setUsers(initialUsers);
+    const fetchUsers = async () => {
+      const usersData = await getUsers();
+      setUsers(usersData);
+    };
+    fetchUsers();
   }, []);
 
   const handleDeleteClick = (user) => {
@@ -20,9 +20,15 @@ function UserTable() {
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (userToDelete) {
-      setUsers(users.filter(u => u.email !== userToDelete.email));
+      try {
+        await deleteUser(userToDelete.email);
+        setUsers(users.filter(u => u.email !== userToDelete.email));
+      } catch (error) {
+        console.error("Failed to delete user:", error);
+        // Optionally, show an error message to the user
+      }
     }
     closeModal();
   };
@@ -31,6 +37,7 @@ function UserTable() {
     setShowDeleteModal(false);
     setUserToDelete(null);
   };
+
 
   return (
     <>

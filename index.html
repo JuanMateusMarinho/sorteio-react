@@ -56,6 +56,14 @@
         </div>
       </div>
 
+    <!-- Modal de Sucesso de Deleção -->
+    <div id="deleteSuccessModal" class="modal">
+      <div class="modal-content">
+        <p>Usuário Deletado com Sucesso!</p>
+        <button id="deleteSuccessOkBtn" class="action-button">Ok</button>
+      </div>
+    </div>
+
     <!-- Modal do Vencedor do Sorteio -->
     <div id="raffleWinnerModal" class="modal">
       <div class="modal-content">
@@ -74,53 +82,67 @@
     <div id="root"></div>
     <!-- <script type="module" src="/src/main.jsx"></script> -->
     <script>
-      // Função para buscar usuários e preencher a tabela
+      // Função para buscar usuários do backend e preencher a tabela
       async function fetchAndDisplayUsers() {
         const tbody = document.querySelector("table tbody");
         tbody.innerHTML = ""; // Limpa a tabela antes de preencher
 
-        // Dados de teste (mock) para exibir na tabela
-        const testUsers = [
-          { name: "Usuário de Teste", email: "teste@exemplo.com" },
-        ];
+        const loadingRow = document.createElement('tr');
+        const loadingCell = document.createElement('td');
+        loadingCell.colSpan = 3;
+        loadingCell.textContent = 'Carregando usuários...';
+        loadingRow.appendChild(loadingCell);
+        tbody.appendChild(loadingRow);
 
-        // Cria uma linha na tabela para cada usuário de teste
-          testUsers.forEach(user => {
-            const tr = document.createElement('tr');
-            // Nome
-            const tdName = document.createElement('td');
-            tdName.className = 'user-name';
-            tdName.textContent = user.name;
-            tr.appendChild(tdName);
+        let users = [];
+        try {
+          const res = await fetch('http://localhost:3000/sorteio/list-user');
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          users = await res.json();
+        } catch (err) {
+          console.warn('Erro ao buscar usuários:', err);
+          console.error('Erro ao buscar usuários:', err);
+          // fallback: mock local
+          users = [ { name: 'Usuário de Teste', email: 'teste@exemplo.com' } ];
+        }
 
-            // Email
-            const tdEmail = document.createElement('td');
-            tdEmail.className = 'user-email';
-            tdEmail.textContent = user.email;
-            tr.appendChild(tdEmail);
+        // Limpa e popula com os usuários (reais ou mock)
+        tbody.innerHTML = '';
 
-            // Botão Alterar
+        console.log('Dados recebidos do backend:', users);
 
-            // Célula de ações: botões um em cima do outro
-            const tdActions = document.createElement('td');
-            tdActions.className = 'action-cell';
-            tdActions.style.display = 'flex';
-            tdActions.style.flexDirection = 'column';
-            tdActions.style.gap = '8px';
+        users.forEach(user => {
+          const tr = document.createElement('tr');
+          tr.dataset.id = user.id; // Adiciona o ID do usuário à linha da tabela
 
-            const editBtn = document.createElement('button');
-            editBtn.textContent = 'Alterar';
-            editBtn.className = 'action-button edit';
-            tdActions.appendChild(editBtn);
+          const tdName = document.createElement('td');
+          tdName.className = 'user-name';
+          tdName.textContent = user.name || '';
+          tr.appendChild(tdName);
 
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = 'Deletar';
-            deleteBtn.className = 'action-button delete';
-            tdActions.appendChild(deleteBtn);
+          const tdEmail = document.createElement('td');
+          tdEmail.className = 'user-email';
+          tdEmail.textContent = user.email || '';
+          tr.appendChild(tdEmail);
 
-            tr.appendChild(tdActions);
+          const tdActions = document.createElement('td');
+          tdActions.className = 'action-cell';
+          tdActions.style.display = 'flex';
+          tdActions.style.flexDirection = 'column';
+          tdActions.style.gap = '8px';
 
-            tbody.appendChild(tr);
+          const editBtn = document.createElement('button');
+          editBtn.textContent = 'Alterar';
+          editBtn.className = 'action-button edit';
+          tdActions.appendChild(editBtn);
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.textContent = 'Deletar';
+          deleteBtn.className = 'action-button delete';
+          tdActions.appendChild(deleteBtn);
+
+          tr.appendChild(tdActions);
+          tbody.appendChild(tr);
         });
       }
 
@@ -132,6 +154,8 @@
       const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
       const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
       const closeConfirmSpan = document.querySelector('.close-confirm');
+      const deleteSuccessModal = document.getElementById('deleteSuccessModal');
+      const deleteSuccessOkBtn = document.getElementById('deleteSuccessOkBtn');
       let rowToDelete = null;
 
       document.querySelector('table tbody').addEventListener('click', function(event) {
@@ -143,9 +167,11 @@
             rowToEdit = event.target.closest('tr');
             editModal.style.display = 'block';
             // Captura os dados do usuário selecionado
+            const id = rowToEdit.dataset.id || ''; // Pega o ID
             const name = rowToEdit.querySelector('.user-name')?.textContent || '';
             const email = rowToEdit.querySelector('.user-email')?.textContent || '';
             // Armazena para uso no redirecionamento
+            rowToEdit.dataset.id = id;
             rowToEdit.dataset.name = name;
             rowToEdit.dataset.email = email;
           }
@@ -158,11 +184,40 @@
           rowToEdit = null;
       }
 
-      confirmDeleteBtn.addEventListener('click', function() {
+      confirmDeleteBtn.addEventListener('click', async function() {
         if (rowToDelete) {
-          rowToDelete.remove();
+          const userId = rowToDelete.dataset.id;
+          if (!userId) {
+            alert('Erro: ID do usuário não encontrado.');
+            closeModal();
+            return;
+          }
+
+          try {
+            const response = await fetch(`http://localhost:3000/sorteio/delete-user/${userId}`, {
+              method: 'DELETE',
+            });
+
+            if (response.ok) {
+              rowToDelete.remove();
+              closeModal(); // Fecha o modal de confirmação
+              deleteSuccessModal.style.display = 'block'; // Mostra o modal de sucesso
+            } else {
+              const errorData = await response.text();
+              alert(`Erro ao deletar usuário: ${errorData}`);
+              closeModal();
+            }
+          } catch (error) {
+            console.error('Erro de rede:', error);
+            alert('Erro de conexão ao tentar deletar o usuário. Verifique o console.');
+            closeModal();
+          }
         }
-        closeModal();
+      });
+
+      // Evento para o botão "Ok" do modal de sucesso de deleção
+      deleteSuccessOkBtn.addEventListener('click', function() {
+        deleteSuccessModal.style.display = 'none';
       });
 
         // Lógica do Modal de Confirmação de Alteração
@@ -175,9 +230,10 @@
         confirmEditBtn.addEventListener('click', function() {
             if (rowToEdit) {
               // Redireciona para a página de alteração levando nome e email
+              const id = rowToEdit.dataset.id || '';
               const name = rowToEdit.dataset.name || '';
               const email = rowToEdit.dataset.email || '';
-              const params = new URLSearchParams({ name, email });
+              const params = new URLSearchParams({ id, name, email });
               window.location.href = `src/alteraruser.html?${params.toString()}`;
             }
             closeModal();
